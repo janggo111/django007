@@ -1,0 +1,170 @@
+■ ForeignKey (1:N)
+
+다른 테이블의 레코드를 참조하는 필드!
+본문과 댓글의 관계를 예로 들 수 있다
+
+Board 라는 테이블 안에 rep1, rep2, rep3, ... , repN 필드가 존재한다고 가정해볼 때, 댓글이 없는 경우 혹은 N 보다 많은 경우 관리가 엉망이 된다. 따라서 댓글은 별도의 테이블로 만들어 주고, Board 와 1:N 관계를 맺어주도록 하는 방향이 어울린다.
+
+Reply 라는 테이블에서는 Board 와 관계를 맺기 위해 ForeignKey 필드를 설정해준다. 이로써 Board 와 Reply 는 1:N 관게를 맺게 되는데, Board 입장에서 갑자기 관계가 맺어진 상황이 되기 때문에 거꾸로 Board 에서 Reply 의 레코드들을 호출할 수 있는 지시자 reply_set 가 생긴다. 이로써 1 위치에 존재하는 Board 의 레코드는 자신에게 딸려있는 reply 레코드들을 호출할 수 있다.
+
+b.reply_set.all()
+ -> 나한테 딸려있는 댓글레코드들 다나와!
+
+
+템플릿 필터 : 앞의 자료를 꾸며줌!!
+ truncatechars : 문자를 자르다
+ truncatewords : 단어를 자르다
+{{ i.subject|truncatechars }} : 이런식으로 사용 | => shift + \ 하면 나온다
+
+
+시간 폼 정하기
+
+https://ssungkang.tistory.com/entry/DjangoDate%EC%99%80-Time%EC%9D%84-%EB%82%98%ED%83%80%EB%82%B4%EB%8A%94-template-filter  ==> 참조
+2022년 07월 22일, 16:47 으로 하겠다
+Y년 n월 j일, H:i
+이친구를 문자열 씌워서
+
+|date:'Y년 n월 j일, H:i' 로 챙겨주면 이 모양대로 들어간다!!
+
+
+
+＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠
+
+<!-- board/index.html -->
+
+<h1><b>게시판</b></h1>
+    
+<div class="text-end">
+    <a href="#" class="btn btn-dark">게시글생성</a>
+</div>
+
+<table class="table table-hover mt-4">
+    <thead>
+        <tr class="table-dark">
+            <th scope="col">NO</th>
+            <th scope="col">SUBJECT</th>
+            <th scope="col">SUMMARY</th>
+            <th scope="col">WRITER</th>
+            <th scope="col">LIKEY</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <th scope="row">1</th>
+            <td><a class="sub" href="#">2</a></td>
+            <td>3</td>
+            <td>4</td>
+            <td>5</td>
+        </tr>
+    </tbody>
+</table>
+
+
+<style>
+    .sub {
+        text-decoration: none;
+        color:black;
+        font-weight: bold;
+    }
+    .sub:hover{
+        color:red;
+    }
+</style>
+
+
+
+＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠
+
+<!-- board/detail.html -->
+
+<h1><b>글제목</b></h1>
+
+<div class="row mt-5">
+    <div class="col-sm-9">
+        <textarea class="form-control" style="height:200px" disabled></textarea>
+    </div>
+    <div class="col-sm-3">
+        <img src="#" width="100%">
+        <div class="text-center mt-3">
+            <h5>written by <b>작성자</b></h5>
+        </div>
+        <div class="text-end mt-3">
+            작성일시
+        </div>
+    </div>
+</div>
+
+<div class="text-end mt-4">
+    <a href="#" class="btn btn-dark">글목록</a>
+    <a href="#" class="btn btn-dark">글수정</a>
+    <!-- Button trigger modal -->
+    <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#remove">
+        글삭제
+    </button>
+
+</div>
+
+
+<!-- Modal -->
+<div class="modal fade" id="remove" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel"><b>게시글 삭제 알림창</b></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                정말 삭제하시겠습니까?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
+                <a href="#" class="btn btn-danger">삭제</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠
+
+<!-- board/create.html -->
+
+<h1><b>게시글 작성</b></h1>
+
+<div class="mb-3 mt-5">
+    <label class="form-label"><b>SUBJECT</b></label>
+    <input type="text" class="form-control">
+</div>
+<div class="mb-3">
+    <label class="form-label"><b>WRITER</b></label>
+    <input type="text" class="form-control" value="{{ user }}" disabled>
+</div>
+<div class="mb-3">
+    <label class="form-label"><b>CONTENT</b></label>
+    <textarea class="form-control" style="height: 150px;"></textarea>
+</div>
+<div class="text-end mt-3">
+    <button class="btn btn-dark">생성</button>
+</div>
+
+
+＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠
+
+<!-- board/update.html -->
+
+<h1><b>게시글수정</b></h1>
+
+<div class="mb-3 mt-5">
+    <label class="form-label"><b>SUBJECT</b></label>
+    <input type="text" class="form-control">
+</div>
+<div class="mb-3">
+    <label class="form-label"><b>WRITER</b></label>
+    <input type="text" class="form-control" disabled value="{{ b.writer }}">
+</div>
+<div class="mb-3">
+    <label class="form-label"><b>CONTENT</b></label>
+    <textarea class="form-control" style="height: 150px;"></textarea>
+</div>
+<div class="text-end mt-3">
+    <button class="btn btn-dark">수정</button>
+</div> 
